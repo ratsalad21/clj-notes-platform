@@ -44,7 +44,7 @@
 (defn app [ds]
   (ring/ring-handler
    (ring/router
-    [["/health" {:get (fn [_] {:status 200 :body {:status "ok"}})}]
+    [["/health" {:get (fn [_] {:status 200 :body {:status "ok" :version "2.0"}})}]
      ["/ready" {:get (fn [_] (ready ds))}]
      ["/notes" {:get (fn [_] (list-notes ds))
                 :post (fn [req] (create-note ds req))}]]
