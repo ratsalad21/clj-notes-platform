@@ -1,3 +1,4 @@
+# Build-and-deploy workflow for notes platform
 name: build-and-deploy
 
 on:

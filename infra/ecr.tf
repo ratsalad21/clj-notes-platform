@@ -2,9 +2,17 @@ resource "aws_ecr_repository" "notes" {
   name                 = var.name
   image_tag_mutability = "IMMUTABLE"
   force_delete         = true
+}
 
-  image_scanning_configuration {
-    scan_on_push = true
+resource "aws_ecr_registry_scanning_configuration" "this" {
+  scan_type = "BASIC"
+
+  rule {
+    scan_frequency = "SCAN_ON_PUSH"
+    repository_filter {
+      filter      = "*"
+      filter_type = "WILDCARD"
+    }
   }
 }
 
