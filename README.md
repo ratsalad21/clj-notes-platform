@@ -76,6 +76,7 @@ build on CRITICAL scan findings, and runs a rolling deploy tagged with the git S
 | **RDS-managed master password** (Secrets Manager) | No password in Terraform state or in git | The Kubernetes Secret is synced by hand for now (see next steps) |
 | **Separate `/health` and `/ready`** | A database outage takes pods out of the load balancer instead of restarting them all | — |
 | **Datadog auto-instrumentation** (dd-java-agent) | Jetty and JDBC spans without code changes; unified service tags link traces to deploys | Business-level spans would need custom instrumentation |
+| **S3 backend with native lockfile locking** | shared, versioned, encrypted state with no DynamoDB table; a separate bootstrap config solves the chicken-and-egg problem | &mdash; |
 
 ## Problems I hit and how I fixed them
 
@@ -110,4 +111,4 @@ terraform -chdir=infra destroy
 - **Python `devctl` CLI:** one command for local setup, port-forwarding and log tailing.
 - **Structured JSON logs with trace IDs:** logs that link to traces in Datadog.
 - **Private nodes + VPC endpoints, plus a pinned tracer version:** to harden the setup for production.
-- **Terraform remote state:** S3 with locking, plus `terraform plan` on pull requests.
+- `terraform plan` on pull requests.

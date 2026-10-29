@@ -9,7 +9,7 @@ variable "name" {
 }
 
 variable "github_repo" {
-  type    = string
+  type        = string
   description = "owner/repo-name of the GitHub repo"
-  default = "ratsalad21/clj-notes-platform"
+  default     = "ratsalad21/clj-notes-platform"
 }
