@@ -1,6 +1,0 @@
-target/
-.cpcache/
-.lsp/
-.clj-kondo/.cache/
-.terraform/
-*.tfstate*
