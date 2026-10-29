@@ -1,0 +1,16 @@
+datadog:
+  site: datadoghq.com          # change if your trial is on another site
+  apiKeyExistingSecret: datadog-secret
+  clusterName: notes-eks
+  logs:
+    enabled: true
+    containerCollectAll: true
+  apm:
+    portEnabled: true          # trace intake on hostPort 8126
+  dogstatsd:
+    useHostPort: true          # JVM runtime metrics on hostPort 8125
+agents:
+  containers:
+    agent:
+      resources:
+        requests: {cpu: 100m, memory: 256Mi}

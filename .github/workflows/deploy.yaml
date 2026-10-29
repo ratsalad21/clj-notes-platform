@@ -53,5 +53,6 @@ jobs:
       - name: Deploy to EKS
         run: |
           aws eks update-kubeconfig --region "$AWS_REGION" --name "$CLUSTER"
-          kubectl set image deployment/notes notes="$IMAGE"
+          TAG="${GITHUB_SHA::7}"
+          kubectl patch deployment notes -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"notes\",\"image\":\"$IMAGE\",\"env\":[{\"name\":\"DD_VERSION\",\"value\":\"$TAG\"}]}]}}}}"
           kubectl rollout status deployment/notes --timeout=180s
