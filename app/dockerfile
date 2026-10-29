@@ -1,0 +1,14 @@
+FROM clojure:temurin-21-tools-deps AS build
+WORKDIR /app
+COPY deps.edn build.clj ./
+RUN clojure -P && clojure -P -T:build
+COPY src src
+RUN clojure -T:build uber
+
+FROM eclipse-temurin:21-jre
+RUN useradd --system --uid 10001 app
+WORKDIR /app
+COPY --from=build /app/target/app.jar app.jar
+USER 10001
+EXPOSE 8080
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
