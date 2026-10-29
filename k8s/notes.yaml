@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes
+  labels: {app: notes}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: notes}
+  template:
+    metadata:
+      labels: {app: notes}
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels: {app: notes}
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: notes
+          image: 397614038828.dkr.ecr.us-east-2.amazonaws.com/notes:v1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_NAME
+              value: notes
+          envFrom:
+            - secretRef:
+                name: notes-db
+          resources:
+            requests: {cpu: 100m, memory: 384Mi}
+            limits: {memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+          readinessProbe:
+            httpGet: {path: /ready, port: 8080}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /health, port: 8080}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes
+spec:
+  type: LoadBalancer
+  selector: {app: notes}
+  ports:
+    - port: 80
+      targetPort: 8080
