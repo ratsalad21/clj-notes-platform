@@ -33,6 +33,12 @@ jobs:
       - name: Fail on critical vulnerabilities
         run: |
           TAG="${GITHUB_SHA::7}"
+          ATTEMPTS=0
+          until aws ecr describe-image-scan-findings --repository-name "$ECR_REPO" --image-id imageTag="$TAG" >/dev/null 2>&1; do
+            ATTEMPTS=$((ATTEMPTS + 1))
+            if [ "$ATTEMPTS" -ge 30 ]; then echo "Scan never started"; exit 1; fi
+            sleep 5
+          done
           aws ecr wait image-scan-complete --repository-name "$ECR_REPO" --image-id imageTag="$TAG"
           CRITICAL=$(aws ecr describe-image-scan-findings --repository-name "$ECR_REPO" --image-id imageTag="$TAG" \
             --query 'imageScanFindings.findingSeverityCounts.CRITICAL' --output text)
